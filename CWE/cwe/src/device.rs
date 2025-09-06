@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+// use uuid::Uuid;
 use sha2::{Sha256, Digest};
 use anyhow::Result;
 use std::path::Path;
+use hex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Device {
