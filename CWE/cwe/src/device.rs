@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-// use uuid::Uuid;
 use sha2::{Sha256, Digest};
 use anyhow::Result;
 use std::path::Path;
@@ -15,7 +14,7 @@ pub struct Device {
 }
 
 impl Device {
-    /// Create a device from basic info nd  hashes serial for privacy.
+    /// Create a device from basic info and  hashes serial for privacy.
     pub fn new(dev_path: &str, model: Option<&str>, serial: Option<&str>, vendor: Option<&str>, run_salt: &str) -> Self {
         let mut hasher = Sha256::new();
         if let Some(s) = serial {
@@ -37,7 +36,8 @@ impl Device {
     }
 }
 
-pub fn enumerate_block_devices(run_salt: &str) -> Result<Vec<Device>> {
+// This parse only linux block devices. Windows and MacOS later
+pub fn enumerate_block_devices_linux(run_salt: &str) -> Result<Vec<Device>> {
     let mut devices = Vec::new();
     let sys_block = std::fs::read_dir("/sys/block")?;
     for entry in sys_block {
