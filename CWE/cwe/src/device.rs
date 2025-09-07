@@ -3,6 +3,8 @@ use sha2::{Sha256, Digest};
 use anyhow::Result;
 use std::path::Path;
 use hex;
+use std::io;
+use std::io::Write;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Device {
@@ -61,3 +63,29 @@ pub fn enumerate_block_devices_linux(run_salt: &str) -> Result<Vec<Device>> {
     Ok(devices)
 }
 
+pub fn list_devices() -> Device {
+    
+    let enum_res = enumerate_block_devices_linux("run");
+
+    match enum_res{
+        Ok(devices) => {
+            let mut i : u32 = 0;
+            println!("------------Devices------------");
+            for device in &devices {
+                println!("#{} {} {}",i,device.id,device.dev_path);
+                i+=1;
+            }
+
+            print!("Device to wipe: ");
+            io::stdout().flush().unwrap();
+            
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).expect("error: unable to read user input");
+            let choice : usize = input.trim().parse().expect("Please type a valid number");
+
+            devices[choice].clone()
+
+        }
+        Err(e) => panic!("Error trying to enumerate devices : {}",e),
+    }
+}

@@ -1,5 +1,18 @@
-use cwe::device::enumerate_block_devices_linux;
+use cwe::device::list_devices;
+use cwe::device::Device;
 
-fn main() {
-    println!("Hello, world!");
+// Main entry point for the utility
+// Working steps
+// 1. List Devices
+// 2. Check wiping options for selected device
+
+
+fn main(){
+    println!("Enumerating block devices");
+
+    // Get the device to wipe
+    let dev = list_devices();
+
+    // Check what kind of wiping device supports
+
 }
