@@ -1,1 +1,0 @@
-/home/amchk/code/SIH25/CWE/target/debug/cwe-cli: /home/amchk/code/SIH25/CWE/cwe/src/device.rs /home/amchk/code/SIH25/CWE/cwe/src/lib.rs /home/amchk/code/SIH25/CWE/cwe-cli/src/main.rs
