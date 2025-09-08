@@ -14,3 +14,4 @@ thiserror = "1.0"
 uuid = { version = "1.4", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 tokio = { version = "1.35", features = ["process", "macros", "rt-multi-thread"] }
+libc = "0.2"
