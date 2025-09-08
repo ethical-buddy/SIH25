@@ -47,7 +47,6 @@ impl Device {
     }
 }
 
-// This parse only linux block devices. Windows and MacOS later
 pub fn enumerate_block_devices_linux(run_salt: &str) -> Result<Vec<Device>> {
     let mut devices = Vec::new();
     let sys_block = std::fs::read_dir("/sys/block")?;
