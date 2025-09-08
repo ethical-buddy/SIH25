@@ -14,10 +14,10 @@ fn main(){
     println!("Enumerating block devices");
 
     // Get the device to wipe
-    let dev = list_devices();
+    let mut dev = list_devices();
     
 
     // Check what kind of wiping device supports
 
-    check_firmware_sanitize(&dev);
+    check_firmware_sanitize(&mut dev);
 }
