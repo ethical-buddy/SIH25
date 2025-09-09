@@ -1,0 +1,11 @@
+[package]
+name = "gui"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cwe = { path = "../cwe" }
+clap = { version = "4.3", features = ["derive"] }
+anyhow = "1.0"
+tokio = { version = "1.35", features = ["process", "macros", "rt-multi-thread"] }
+gtk4 = "0.10"
