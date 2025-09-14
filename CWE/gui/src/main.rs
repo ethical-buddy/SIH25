@@ -4,10 +4,12 @@ use gtk4::{
     Orientation, MessageDialog, HeaderBar, Stack, StackSidebar, Separator,
     ScrolledWindow, Frame, CheckButton, ProgressBar, ButtonsType, MessageType
 };
-use cwe::device::enumerate_block_devices_linux;
+use cwe::device::{enumerate_block_devices_linux,find_device_by_path};
 use std::rc::Rc;
 use std::cell::RefCell;
 use cwe::device::Device;
+use cwe::wipe::wipe_device;
+
 
 #[derive(Clone)]
 struct AppState {
@@ -388,24 +390,51 @@ fn show_confirmation_dialog(app_state: &AppState) {
     
     dialog.show();
 }
-
 fn start_wipe_process(app_state: &AppState) {
     let device_path = app_state.selected_device.borrow().clone()
         .unwrap_or("Unknown device".to_string());
     
-    // This would typically start the actual wipe process
-    // For now, just show a success message
-    let dialog = MessageDialog::builder()
-        .transient_for(&app_state.window)
-        .modal(true)
-        .message_type(MessageType::Info)
-        .buttons(ButtonsType::Ok)
-        .text("Wipe Process Started")
-        .secondary_text(&format!(
-            "Wiping process for {} has been initiated.\n\n(This is a demo - no actual wiping performed)",
-            device_path
-        ))
-        .build();
+    // Handle device lookup and wipe process with proper error handling
+    let wipe_result = match find_device_by_path(&device_path, "hehe") {
+        Ok(mut device) => {
+            // Device found, attempt to wipe
+            wipe_device(&mut device)
+        }
+        Err(e) => {
+            // Device lookup failed
+            Err(e)
+        }
+    };
+    
+    // Create appropriate dialog based on result
+    let dialog = match wipe_result {
+        Ok(_) => {
+            MessageDialog::builder()
+                .transient_for(&app_state.window)
+                .modal(true)
+                .message_type(MessageType::Info)
+                .buttons(ButtonsType::Ok)
+                .text("Wipe Process Complete")
+                .secondary_text(&format!(
+                    "Wiping process for {} has been completed successfully.\n\n(This is not a demo - actual wiping performed)",
+                    device_path
+                ))
+                .build()
+        }
+        Err(e) => {
+            MessageDialog::builder()
+                .transient_for(&app_state.window)
+                .modal(true)
+                .message_type(MessageType::Error) // Changed to Error type
+                .buttons(ButtonsType::Ok)
+                .text("Wipe Process Failed")
+                .secondary_text(&format!(
+                    "Wiping process for {} has failed.\n\nError: {}\n\n(This is not a demo - actual wiping attempted)",
+                    device_path, e
+                ))
+                .build()
+        }
+    };
     
     let stack_clone = app_state.stack.clone();
     dialog.connect_response(move |dialog, _| {
@@ -415,6 +444,7 @@ fn start_wipe_process(app_state: &AppState) {
     
     dialog.show();
 }
+
 
 fn main() {
     let app = Application::builder()

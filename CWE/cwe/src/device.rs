@@ -107,6 +107,21 @@ pub fn enumerate_block_devices_linux(run_salt: &str) -> Result<Vec<Device>> {
     Ok(devices)
 }
 
+pub fn find_device_by_path(dev_path: &str, run_salt: &str) -> std::io::Result<Device> {
+    let devices = enumerate_block_devices_linux(run_salt)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+    
+    for device in devices {
+        if device.dev_path == dev_path {
+            return Ok(device);
+        }
+    }
+    
+    Err(std::io::Error::new(
+        std::io::ErrorKind::NotFound, 
+        format!("Device not found: {}", dev_path)
+    ))
+}
 pub fn list_devices() -> Device {
     
     let enum_res = enumerate_block_devices_linux("run");
